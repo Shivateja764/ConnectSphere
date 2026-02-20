@@ -1,24 +1,145 @@
 
-const {userModel }=require("../models/userModel.js")
+const { userModel } = require("../models/userModel.js")
+const bcryptjs=require("bcryptjs")
+const { generateHash ,generateToken}=require("../utils/users.js")
 
-exports.register=async (req,res)=>{
-    try{
-        // console.log(req.body)
-        const {name,password,email}=req.body
-        const newDoc=await userModel.create({
-            name:name,password:password,email:email
+
+
+exports.register = async (req, res) => {
+
+    try {
+        const { name, email, password } = req.body
+        const checkEmail = await userModel.findOne({ email: email })
+        if (checkEmail) {
+            res.status(409).json({
+                success: false,
+                statusCode: 409,
+                message: "User already exists with mail id",
+                error: {
+                    code: "USER_EXISTS"
+                }
+            })
+        }else{
+            const hashPassword= await generateHash(password,12)
+            const newDoc=await userModel.create({email:email,name:name,password:hashPassword})
+            res.status(201).json({
+
+                success:true,
+                statusCode:201,
+                message:"Account created successfully",
+                data:{
+                    name:newDoc.name,
+                    email:newDoc.email,
+                    role:newDoc.role,
+                    profile_pic:newDoc.profile_pic,
+                }
+            })
+
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: "something went wrong, please try again later",
+            error: {
+                code: "SOMETHING_WENT_WRONG"
+                }
+
         })
-        res.status(200).json(newDoc)
-    }catch(error){
-        res.status(400).json('something went wrong')
     }
+
+
+
 }
 
-exports.login=(req,res)=>{
-    res.send("login")
+exports.login = async(req, res) => {
+      try{
+        const {email,password}=req.body
+        const checkAccountExist=await userModel.findOne({email:email},{createdAt:false,updatedAt:false})
+        if(!checkAccountExist){
+            const response={
+                success:false,
+                statusCode:401,
+                message:"user not exist",
+                error:{
+                    code:"USER_NOT_EXISTS"
+                }
+            }
+            return  res.status(response.statusCode).json(response)
+        }
+        if(checkAccountExist.isBlocked){
+            const response={
+                success:false,
+                statusCode:403,
+                message:"Account blocked by admin",
+                error:{
+                    code:"ACCOUNT_BLOCKED"
+                }
+            }
+          return  res.status(response.statusCode).json(response)
+        }
+
+        const checkPassword= await bcryptjs.compare(password,checkAccountExist.password)
+        if(checkPassword){
+            const token=await generateToken({email:checkAccountExist.email,name:checkAccountExist.name})
+            console.log(token)
+            const response={
+              success:true,
+              statusCode:200,
+              message:'login succcesfuly' ,
+              data:{
+               user:{ name:checkAccountExist.name,
+                email:checkAccountExist.email,
+                role:checkAccountExist.role,
+                profile_pic:checkAccountExist.profile_pic
+              },
+              token:token
+              
+            }
+        }
+            return res.status(response.statusCode).json(response)
+        }else{
+            const response={
+                success:false,
+                statusCode:401,
+                message:"Inavalid email/password",
+                error:{
+                    code:"INVALID EMAIL/PASSWORD"
+                }
+            }
+            return res.status(response.statusCode).json(response)
+            
+
+        }
+
+
+
+      } catch(error){
+        console.log(error)
+        res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: "something went wrong, please try again later",
+            error: {
+                code: "SOMETHING_WENT_WRONG"
+                }
+
+        })
+      }
 }
 
 
-exports.me=(req,res)=>{
-    res.send("me user")
+exports.profile = async(req, res) => {
+    const userData=await userModel.findById(req.user._id,{isBlocked:false})
+    res.status(200).json({
+        success:true,
+        statusCode:200,
+        message:"Fetched profile Info",
+        data:{
+            user:userData
+        }
+
+    })
 }

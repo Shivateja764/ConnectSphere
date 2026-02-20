@@ -1,4 +1,4 @@
-const {body,param,query}=require('express-validator')
+const {body,param,query,header}=require('express-validator')
 
 exports.registerValidationsChecks=[
     body("name").exists()
@@ -13,8 +13,21 @@ exports.registerValidationsChecks=[
     ),
     body('email').exists()
     .withMessage('email field is misssing')
-    .isEmail().withMessage("please enter proper mail"),
+    .isEmail().withMessage("please enter valid mail"),
     body('password').exists( )
     .withMessage("password field is missing")
     .isStrongPassword().withMessage("at least 8 characters ,one lowercase,one Uppercase,one number,and one symbol is required")
 ]
+
+
+exports.loginChecks=[
+    body("email").exists().withMessage('name field is missing').isEmail().withMessage('please enter valid email'),
+    body("password").exists().withMessage("password field is missing").isStrongPassword().withMessage("at least 8 characters ,one lowercase,one Uppercase,one number,and one symbol is required")
+]
+
+
+exports.profileChecks=[
+    header("Authorization").exists().withMessage("authorization field missing").custom(value=>value.startsWith("Bearer")).withMessage("User Bearer keyword before token")
+]
+
+

@@ -5,6 +5,7 @@ const {connectDB}=require("./config/db.js")
 
 connectDB()
 const authRoutes=require('./Routes/authRoutes.js')
+const {errorMiddleware}=require("./middlewares/Error.js")
 app.use(express.json())
 app.use(express.urlencoded())
 
@@ -28,6 +29,8 @@ app.use((req,res)=>{
 
 })
 
+//global error handling miidleware 
+app.use(errorMiddleware)
 
 
 app.listen(process.env.PORT,()=>{
