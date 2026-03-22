@@ -18,10 +18,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://connect-sphere-nu.vercel.app"],
+    origin: ["http://localhost:5173"],
     credentials: true,
   }),
 );
+
+// "https://connect-sphere-nu.vercel.app"
 
 // Swagger Documentation Route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
