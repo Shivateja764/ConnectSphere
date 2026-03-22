@@ -18,9 +18,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:5173","connect-sphere-olive.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://connect-sphere-olive.vercel.app",
+    ],
     credentials: true,
-  }),
+  })
 );
 
 // "https://connect-sphere-nu.vercel.app"
