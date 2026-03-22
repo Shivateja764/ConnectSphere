@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8181/api/v1",
-  // baseURL: "https://connectsphere-apis.onrender.com/api/v1",
+  // baseURL: "http://localhost:8181/api/v1",
+  baseURL: "https://connectsphere-apis-7gl5.onrender.com/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
