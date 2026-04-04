@@ -26,7 +26,6 @@ app.use(
   })
 );
 
-// "https://connect-sphere-nu.vercel.app"
 
 // Swagger Documentation Route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
