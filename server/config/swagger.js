@@ -10,14 +10,14 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API documentation for ConnectSphere social media platform",
       contact: {
-        name: "Sharath",
-        email: "[sharath@gm.com]",
+        name: "Shiva",
+        email: "[shiva@gm.com]",
         url: "https://yourwebsite.com",
       },
     },
     servers: [
       {
-        url: "http://localhost:8080",
+        url: "http://localhost:8181",
         description: "Development server",
       },
       {
